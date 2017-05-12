@@ -9,6 +9,3 @@ To install this and run it...
 5. Install the dependencies with `pip install -r requirements.txt`
 3. Run `python manage.py migrate` to build the database.
 4. Run `python manage.py runserver` and visit at 127.0.0.1:8000
-
-
-For full Google API authorization and request examples: https://developers.google.com/api-client-library/javascript/samples/samples#authorizing-and-making-authorized-requests
