@@ -37,14 +37,7 @@
       var user = GoogleAuth.currentUser.get();
       setSigninStatus();
 
-      // Check if access to analytics object
-      /*
-      return gapi.client.request({
-        'path': 'https://people.googleapis.com/v1/people/me',
-      });
-      */
-
-
+      // Event handlers
       // Call handleAuthClick function when user clicks on
       //      "Sign In/Authorize" button.
       $('#sign-in-or-out-button').click(function() {
@@ -53,6 +46,10 @@
       $('#revoke-access-button').click(function() {
         revokeAccess();
       }); 
+      $('#list-accounts-button').click(function() {
+        listAccounts();
+      });  
+
     });
   }
 
@@ -77,6 +74,7 @@
       
       $('#sign-in-or-out-button').html('Sign out');
       $('#revoke-access-button').css('display', 'inline-block');
+      $('#list-accounts-button').css('display', 'inline-block');
       $('#auth-status').html('You are currently signed in and have granted ' +
           'access to this app.');
       $('#ga-report').html("Report from Google");
@@ -84,6 +82,7 @@
     } else {
       $('#sign-in-or-out-button').html('Sign In/Authorize');
       $('#revoke-access-button').css('display', 'none');
+      $('#list-accounts-button').css('display', 'none');
       $('#auth-status').html('You have not authorized this app or you are ' +
           'signed out.');
     }
@@ -95,9 +94,14 @@
 
 
   function listAccounts() {
-    console.log(gapi.client);
-    var request = gapi.client.analytics.management.accounts.list();
-    request.execute(printAccounts);
+    if (GoogleAuth.isSignedIn.get()) {
+        console.log(gapi.client);
+        //var request = gapi.client.analytics.management.accounts.list();
+        //request.execute(printAccounts);
+        return gapi.client.request({
+          'path': 'https://people.googleapis.com/v1/people/me',
+        });
+    }
   }
 
 /*
@@ -122,6 +126,8 @@ function printAccounts(results) {
 
 </script>
 
+</head>
+
   <body>
 
     <h1>Google Analytics Demo</h1>
@@ -130,6 +136,9 @@ function printAccounts(results) {
             style="margin-left: 25px">Sign In/Authorize</button>
     <button id="revoke-access-button"
             style="display: none; margin-left: 25px">Revoke access</button>
+
+    <button id="list-accounts-button"
+            style="display:none; margin-left: 25px">Show Accounts</button>
 
     <div id="auth-status" style="display: inline; padding-left: 25px"></div><hr>
 

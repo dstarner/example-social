@@ -5,17 +5,13 @@
 <script>
   /* Get the scopes from https://developers.google.com/analytics/devguides/config/mgmt/v3/authorization */
   var GoogleAuth;
-  var SCOPE = 'https://www.googleapis.com/auth/analytics.readonly';
+  var SCOPE = 'https://www.googleapis.com/auth/analytics https://www.googleapis.com/auth/analytics.readonly';
   
 
   function handleClientLoad() {
     // Load the API's client and auth2 modules.
     // Call the initClient function after the modules load.
     gapi.load('client:auth2', initClient);
-  }
-
-  function revokeAccess(){
-
   }
 
   function initClient() {
@@ -41,6 +37,7 @@
       var user = GoogleAuth.currentUser.get();
       setSigninStatus();
 
+      // Event handlers
       // Call handleAuthClick function when user clicks on
       //      "Sign In/Authorize" button.
       $('#sign-in-or-out-button').click(function() {
@@ -49,6 +46,10 @@
       $('#revoke-access-button').click(function() {
         revokeAccess();
       }); 
+      $('#list-accounts-button').click(function() {
+        listAccounts();
+      });  
+
     });
   }
 
@@ -70,13 +71,18 @@
     var user = GoogleAuth.currentUser.get();
     var isAuthorized = user.hasGrantedScopes(SCOPE);
     if (isAuthorized) {
+      
       $('#sign-in-or-out-button').html('Sign out');
       $('#revoke-access-button').css('display', 'inline-block');
+      $('#list-accounts-button').css('display', 'inline-block');
       $('#auth-status').html('You are currently signed in and have granted ' +
           'access to this app.');
+      $('#ga-report').html("Report from Google");
+      listAccounts();
     } else {
       $('#sign-in-or-out-button').html('Sign In/Authorize');
       $('#revoke-access-button').css('display', 'none');
+      $('#list-accounts-button').css('display', 'none');
       $('#auth-status').html('You have not authorized this app or you are ' +
           'signed out.');
     }
@@ -85,7 +91,42 @@
   function updateSigninStatus(isSignedIn) {
     setSigninStatus();
   }
+
+
+  function listAccounts() {
+    if (GoogleAuth.isSignedIn.get()) {
+        console.log(gapi.client);
+        //var request = gapi.client.analytics.management.accounts.list();
+        //request.execute(printAccounts);
+        return gapi.client.request({
+          'path': 'https://people.googleapis.com/v1/people/me',
+        });
+    }
+  }
+
+/*
+ * Example 2:
+ * The results of the list method are passed as the results object.
+ * The following code shows how to iterate through them.
+ */
+function printAccounts(results) {
+  if (results && !results.error) {
+    var accounts = results.items;
+    for (var i = 0, account; account = accounts[i]; i++) {
+      console.log('Account Id: ' + account.id);
+      console.log('Account Kind: ' + account.kind);
+      console.log('Account Name: ' + account.name);
+      console.log('Account Created: ' + account.created);
+      console.log('Account Updated: ' + account.updated);
+    }
+  }
+}
+
+
+
 </script>
+
+</head>
 
   <body>
 
@@ -96,7 +137,13 @@
     <button id="revoke-access-button"
             style="display: none; margin-left: 25px">Revoke access</button>
 
+    <button id="list-accounts-button"
+            style="display:none; margin-left: 25px">Show Accounts</button>
+
     <div id="auth-status" style="display: inline; padding-left: 25px"></div><hr>
+
+    <div id="ga-report">Google Analytics goes here</div>
+
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script async defer src="https://apis.google.com/js/api.js" 

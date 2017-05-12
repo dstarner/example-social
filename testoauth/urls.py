@@ -24,9 +24,13 @@ def index(request):
 def tony_view(request):
     return render(request, "tony.html")
 
+def tony_view2(request):
+    return render(request, "tony2.html")
+
 urlpatterns = [
     url(r'^$', index, name="index"),
     url(r'^admin/', admin.site.urls),
     url('', include('social_django.urls', namespace='social')),
-    url(r'^tony*.', tony_view, name='tony')
+    url(r'^tony2', tony_view2, name='tony2'),
+    url(r'^tony1', tony_view, name='tony')
 ]
