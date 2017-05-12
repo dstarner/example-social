@@ -108,7 +108,9 @@ function handleProperties(response) {
 
     for(i=0; i < response.result.items.length;i++){
        theProperty = response.result.items[i];   
-       theText += theProperty.id + " : " + theProperty.name + "\n";
+       thePropertyId = theProperty.id;
+       
+       theText += thePropertyId + " : " + theProperty.name + "\n";
     }
     document.getElementById('properties-output').value = theText;
 
